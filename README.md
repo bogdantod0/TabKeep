@@ -2,7 +2,7 @@
 
 A local-first, server-synced iOS bill-splitting app — think Splitwise, built in SwiftUI for iOS 17+, with multi-currency expenses, multi-payer support, and Grovs-powered deferred deep-link invites.
 
-Licensed under the [MIT License](LICENSE).
+**[Download on the App Store](https://apps.apple.com/app/id6766437336)** · [tabkeep.uk](https://tabkeep.uk/) · Licensed under the [MIT License](LICENSE).
 
 ## Powered by Grovs
 
