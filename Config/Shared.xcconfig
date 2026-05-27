@@ -1,0 +1,10 @@
+// Marketing version — bump manually per release (semver).
+MARKETING_VERSION = 1.0
+
+// Build number — placeholder. Overwritten at build time by the
+// "Auto-increment build number" Run Script phase (git rev-list --count HEAD).
+CURRENT_PROJECT_VERSION = 1
+
+// Google Sign-In — paste values from Google Cloud Console iOS OAuth client.
+GOOGLE_OAUTH_CLIENT_ID = REPLACE_ME_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.REPLACE_ME_GOOGLE_OAUTH_CLIENT_ID

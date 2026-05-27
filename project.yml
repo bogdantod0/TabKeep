@@ -1,0 +1,142 @@
+name: TabKeep
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    DEVELOPMENT_TEAM: "REPLACE_ME_TEAM_ID"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+packages:
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: 7.1.0
+  Grovs:
+    url: https://github.com/grovs-io/grovs-iOS.git
+    from: 2.3.0
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 11.0.0
+targets:
+  TabKeep:
+    type: application
+    platform: iOS
+    sources:
+      - path: TabKeep
+    resources:
+      - path: TabKeep/Resources
+    dependencies:
+      - package: GoogleSignIn
+        product: GoogleSignIn
+      - package: Grovs
+        product: Grovs
+      - package: Firebase
+        product: FirebaseAnalytics
+    configFiles:
+      Debug:   Config/Debug.xcconfig
+      Release: Config/Release.xcconfig
+    info:
+      path: TabKeep/Info.plist
+      properties:
+        UILaunchScreen: {}
+        CFBundleDisplayName: TabKeep
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UIUserInterfaceStyle: Automatic
+        ITSAppUsesNonExemptEncryption: false
+        NSCameraUsageDescription: "Attach a receipt photo to an expense."
+        NSPhotoLibraryUsageDescription: "Attach a receipt photo to an expense."
+        API_BASE_URL: $(API_BASE_URL)
+        GIDClientID: $(GOOGLE_OAUTH_CLIENT_ID)
+        GrovsSDKKey: $(GROVS_SDK_KEY)
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - $(GOOGLE_REVERSED_CLIENT_ID)
+          - CFBundleURLSchemes:
+              - REPLACE_ME_GROVS_URL_SCHEME
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIBackgroundModes:
+          - remote-notification
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.tabkeep
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: TabKeep/TabKeep.entitlements
+    preBuildScripts:
+      - name: Guard Release builds against placeholder Grovs SDK key
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          # Refuse to build Release with the REPLACE_ME_PROD placeholder.
+          # Catches a TestFlight upload before it ships a binary that would
+          # silently fail Grovs.configure and surface "Failed to generate
+          # Grovs link" toasts to real users.
+          if [ "${CONFIGURATION}" = "Release" ]; then
+            if [[ "${GROVS_SDK_KEY:-}" == REPLACE_ME* ]] || [ -z "${GROVS_SDK_KEY:-}" ]; then
+              echo "error: GROVS_SDK_KEY is not configured for Release. Set a real key in Config/Release.xcconfig (currently: '${GROVS_SDK_KEY:-<empty>}')."
+              exit 1
+            fi
+          fi
+    postBuildScripts:
+      - name: Auto-increment build number
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          # CFBundleVersion = number of commits on the current branch.
+          # Deterministic, monotonically increasing per commit, no source-file churn.
+          # Marketing version (CFBundleShortVersionString) is set manually via MARKETING_VERSION in Config/Shared.xcconfig.
+          if ! command -v git >/dev/null 2>&1; then
+            echo "warning: git not found, skipping build-number bump"
+            exit 0
+          fi
+          BUILD_NUM=$(git -C "$SRCROOT" rev-list --count HEAD 2>/dev/null || echo "")
+          if [ -z "$BUILD_NUM" ]; then
+            echo "warning: could not read git commit count, leaving CURRENT_PROJECT_VERSION as-is"
+            exit 0
+          fi
+          INFO_PLIST="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUM" "$INFO_PLIST"
+          echo "CFBundleVersion set to $BUILD_NUM"
+      - name: Generate dSYMs for Firebase/Google XCFrameworks
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          # Firebase Analytics + GoogleAppMeasurement + GoogleAdsOnDeviceConversion
+          # + GoogleAppMeasurementIdentitySupport are distributed by Google as
+          # pre-stripped XCFrameworks without dSYM bundles. During archive
+          # upload Xcode emits "Upload Symbols Failed" warnings for each of
+          # them. App Store Connect accepts the build either way, but the
+          # warnings clutter the validation report. Generate empty-but-valid
+          # dSYM stubs via dsymutil so Xcode's symbol-upload step succeeds.
+          # The stubs contain no debuggable info (the source binaries had it
+          # stripped) but their UUIDs match, satisfying the upload contract.
+          [ "${CONFIGURATION}" = "Release" ] || exit 0
+          DSYM_DIR="${DWARF_DSYM_FOLDER_PATH}"
+          FRAMEWORKS_DIR="${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/Frameworks"
+          for fw in FirebaseAnalytics GoogleAppMeasurement GoogleAdsOnDeviceConversion GoogleAppMeasurementIdentitySupport; do
+            FW_BINARY="${FRAMEWORKS_DIR}/${fw}.framework/${fw}"
+            DSYM_OUT="${DSYM_DIR}/${fw}.framework.dSYM"
+            if [ -f "${FW_BINARY}" ] && [ ! -d "${DSYM_OUT}" ]; then
+              echo "Generating stub dSYM for ${fw}"
+              dsymutil "${FW_BINARY}" -o "${DSYM_OUT}" || echo "warning: dsymutil failed for ${fw} (continuing)"
+            fi
+          done
+schemes:
+  TabKeep:
+    build:
+      targets:
+        TabKeep: all

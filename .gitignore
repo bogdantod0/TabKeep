@@ -1,0 +1,21 @@
+.superpowers/
+.DS_Store
+xcuserdata/
+*.xcuserstate
+build/
+DerivedData/
+
+# Xcode
+*.xcodeproj
+.swiftpm/
+*.xcworkspace
+!project.yml
+
+# Local symlink to sibling backend repo
+/backend
+
+# SourceKit-LSP build-server config (paths are user-specific)
+buildServer.json
+
+# Per-user Claude Code permissions
+.claude/settings.local.json

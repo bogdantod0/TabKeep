@@ -1,0 +1,3 @@
+#include "Shared.xcconfig"
+API_BASE_URL = http:/$()/localhost:3000
+GROVS_SDK_KEY = REPLACE_ME_GROVS_SDK_KEY

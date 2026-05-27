@@ -1,0 +1,47 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#11212D"/>
+      <stop offset="100%" stop-color="#0E7C86"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EEF1F0"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="20" stdDeviation="28" flood-color="#000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="225" fill="url(#bg)"/>
+
+  <g transform="rotate(7 594 512)" filter="url(#shadow)">
+    <path d="M 434 232 h 320 v 540
+             l -20 16 l -20 -16 l -20 16 l -20 -16 l -20 16 l -20 -16
+             l -20 16 l -20 -16 l -20 16 l -20 -16 l -20 16 l -20 -16
+             l -20 16 l -20 -16 l -20 16 l -20 -16 z" fill="url(#paper)"/>
+    <rect x="464" y="282" width="200" height="22" rx="11" fill="#0E7C86"/>
+    <rect x="464" y="334" width="180" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="464" y="368" width="220" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="464" y="402" width="160" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="464" y="436" width="200" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="464" y="470" width="140" height="14" rx="7" fill="#C8D2D0"/>
+    <line x1="464" y1="510" x2="724" y2="510" stroke="#C8D2D0" stroke-width="2" stroke-dasharray="6 6"/>
+    <text x="594" y="650" font-family="ui-rounded, -apple-system, system-ui, sans-serif" font-size="150" font-weight="800" fill="#11212D" text-anchor="middle">$</text>
+  </g>
+
+  <g transform="rotate(-7 430 512)" filter="url(#shadow)">
+    <path d="M 270 232 h 320 v 540
+             l -20 16 l -20 -16 l -20 16 l -20 -16 l -20 16 l -20 -16
+             l -20 16 l -20 -16 l -20 16 l -20 -16 l -20 16 l -20 -16
+             l -20 16 l -20 -16 l -20 16 l -20 -16 z" fill="url(#paper)"/>
+    <rect x="300" y="282" width="200" height="22" rx="11" fill="#0E7C86"/>
+    <rect x="300" y="334" width="180" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="300" y="368" width="220" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="300" y="402" width="160" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="300" y="436" width="200" height="14" rx="7" fill="#C8D2D0"/>
+    <rect x="300" y="470" width="140" height="14" rx="7" fill="#C8D2D0"/>
+    <line x1="300" y1="510" x2="560" y2="510" stroke="#C8D2D0" stroke-width="2" stroke-dasharray="6 6"/>
+    <text x="430" y="650" font-family="ui-rounded, -apple-system, system-ui, sans-serif" font-size="150" font-weight="800" fill="#11212D" text-anchor="middle">$</text>
+  </g>
+</svg>
